@@ -7,7 +7,7 @@ load(":tester.bzl", "remap_deb_tars")
 def scion_app_base():
     pkg_tar(
         name = "app_layer_deb",
-        deps = ["@tester_deb//coreutils/amd64"],
+        deps = ["@tester_deb//coreutils/arm64"],
     )
 
     remap_deb_tars(

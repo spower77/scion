@@ -8,9 +8,17 @@ build-dev:
 	tar -kxf bazel-bin/scion-topo.tar -C bin
 
 build:
+	bazel build //:scion //tools:topogen
 	rm -f bin/*
-	bazel build //:scion
 	tar -kxf bazel-bin/scion.tar -C bin
+	# 4. Manually grab topogen from the Bazel output tree
+	cp $$(find /home/samuelpower.guest/.cache/bazel -name topogen -type f -executable | grep aarch64-fastbuild | head -n 1) bin/topogen
+
+	# 5. Grab the stable supervisord we just installed
+	cp /usr/local/bin/supervisord bin/supervisord
+	ln -sf supervisord bin/supervisorctl
+
+	@echo "Build complete. All binaries are synced to ./bin/"
 
 # BFLAGS is optional. It may contain additional command line flags for CI builds. Currently this is:
 # "--file_name_version=$(tools/git-version)" to include the git version in the artifacts names.

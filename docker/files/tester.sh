@@ -7,9 +7,13 @@ term() {
 
 trap term TERM
 
-if [ -n "$REMOTE_NETS" ] && [ -n "$SIG_IP" ]; then
+if [ -n "$REMOTE_NETS" ]; then
     for net in $(echo $REMOTE_NETS | tr , ' '); do
-        ip route add "$net" via $SIG_IP dev eth0
+        if [[ "$net" == *:* ]]; then
+            [ -n "$SIG_IP6" ] && ip route add "$net" via "$SIG_IP6" dev eth0
+        else
+            [ -n "$SIG_IP" ] && ip route add "$net" via "$SIG_IP" dev eth0
+        fi
     done
 fi
 echo "Tester started"

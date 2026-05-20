@@ -90,11 +90,13 @@ class DockerUtilsGenerator(object):
         else:
             entry['environment']['SCION_DAEMON'] = '[%s]:30255' % sciond_net[ipv]
         if self.args.sig:
-            # If the tester container needs to communicate to the SIG, it needs the SIG_IP and
-            # REMOTE_NETS which are the remote subnets that need to be routed through the SIG.
-            # net information for the connected SIG
-            sig_net = self.args.networks['sig%s' % topo_id.file_fmt()][0]
-            entry['environment']['SIG_IP'] = str(sig_net[ipv])
+            # If the tester container needs to communicate to the SIG, it needs the SIG_IP /
+            # SIG_IP6 and REMOTE_NETS which are the remote subnets routed through the SIG.
+            for sig_net in self.args.networks['sig%s' % topo_id.file_fmt()]:
+                if 'ipv4' in sig_net:
+                    entry['environment']['SIG_IP'] = str(sig_net['ipv4'])
+                elif 'ipv6' in sig_net:
+                    entry['environment']['SIG_IP6'] = str(sig_net['ipv6'])
             entry['environment']['REMOTE_NETS'] = remote_nets(self.args.networks, topo_id)
         self.dc_conf['services'][name] = entry
 

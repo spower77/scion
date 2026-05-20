@@ -173,7 +173,8 @@ def remote_nets(networks, topo_id):
     rem_nets = []
     for key in networks:
         if 'sig' in key and topo_id.file_fmt() not in key:
-            rem_nets.append(str(networks[key][0]['net']))
+            for net_entry in networks[key]:
+                rem_nets.append(str(net_entry['net']))
     return ','.join(rem_nets)
 
 
